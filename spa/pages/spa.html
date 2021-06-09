@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>单页面</title>
+    <style>
+        a{
+            color: blue;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<h2>当页面应用</h2>
+<ul>
+    <li><a onclick="route('/products')">列表</a></li>
+    <li><a onclick="route('/product/123')">详情</a></li>
+</ul>
+<div id="content"></div>
+
+</body>
+<script>
+    //进入页面匹配，初始化
+    //程序切换路由配置
+    //浏览器前进 后退切换
+
+    //先配置一份路由表
+    function List() {
+        const html =  `
+         <ul>
+            <li> apple</li>
+            <li> 华为</li>
+            <li> 三星</li>
+        </ul>
+       `
+        document.getElementById('content').innerHTML = html
+    }
+    function Detail() {
+        document.getElementById('content').innerHTML = 'Detail'
+    }
+    const pages = [
+        {
+            match:/\/products/,
+            route:List,
+        },
+        {
+            match:/\/product\/\d+/,
+            route:Detail,
+        },
+    ]
+    //匹配路由
+     function matchRoute(pages,href) {
+    //匹配路由
+      const page = pages.find(item=>item.match.test(href))
+    //当页面替换内同
+     page.route()
+    }
+    //进入页面初始化
+    matchRoute(pages,window.location.href)
+    //程序切换路由
+    function route(url) {
+        //切换url，不刷新跳转页面
+        window.history.pushState(null,null,url)
+        // 再做相关内容切换
+        matchRoute(pages,url)
+    }
+    //浏览器前进后退  通过onpopstate监听状态变化
+    window.onpopstate =function () {
+       matchRoute(pages,window.location.href)
+    }
+</script>
+</html>

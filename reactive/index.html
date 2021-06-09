@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>reactive函数实现</title>
+    <script src="index.js"></script>
+</head>
+<body>
+<button id="add">add</button>
+<div id="app"></div>
+</body>
+<script>
+    let data = reactive({
+        count: {
+            a:1,
+            b:{
+                c:2
+            }
+        }
+    });
+    document.getElementById("add").addEventListener("click", function() {
+        data.count.b.c++ ;
+
+    });
+    //
+    let str;
+    watch(() => {
+        str = `点击了 ${data.count.b.c} 次`;
+        document.getElementById("app").innerText = str;
+    });
+</script>
+</html>

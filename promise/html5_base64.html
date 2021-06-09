@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <label for="file">file:</label>
+        <input type="file" id="file" name="file">
+        <input type="submit" onclick="submit()" value="Submit">
+    </div>
+</body>
+<script>
+ //这只是一个demo ，才用一个全局变量去缓存,正式场景不能这样   
+ let   upload = {}   
+ document.getElementById('file').addEventListener('change',(e)=>{
+            const files = e.target.files
+            // file类型就是File
+            // file的父类就是Blob  file的_proto_指向的是Blob
+            // Blob本身就是用来描述文件的，有人说为什么不是Buffer,Buffer是缓冲区，
+            // Buffer不能代表数据,只是用来缓数据的,但是Steam流可以代表数据，但是web端是没有这个Steam这个类型
+            for(let file of files){
+                //通过 new FileReader 把Blob的base64字符串 通过readAsDataURL 读取出来 Base64对于大文件是不可接收的 
+                const fr = new FileReader()
+                fr.readAsDataURL(file)
+                //fr初始化加载
+                fr.onload =function(){
+                    console.log(fr.result)
+                    upload.data = fr.result.substr(22)
+                    upload.name = file.name
+                }
+            }
+            // console.log(files)
+        })
+    function submit(){
+        fetch('/fileb64',{
+            method:'POST',
+            body:JSON.stringify(upload),
+            headers:{
+            'Content-type':'application/json'
+             }
+            }
+            )
+    }
+</script>
+</html>
